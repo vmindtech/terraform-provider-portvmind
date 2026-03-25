@@ -44,18 +44,12 @@ checksum:
   name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
   algorithm: sha256
 
-# GPG signing: enable after registering a key in the Terraform Registry.
-# Local: GPG_FINGERPRINT=... goreleaser release --clean
-# signs:
-#   - artifacts: checksum
-#     args:
-#       - "--batch"
-#       - "--local-user"
-#       - "{{ .Env.GPG_FINGERPRINT }}"
-#       - "--output"
-#       - "${signature}"
-#       - "--detach-sign"
-#       - "${artifact}"
+# GPG signing: required by the Terraform Registry (SHA256SUMS + SHA256SUMS.sig).
+# Register the matching public key under Registry → Provider → Signing keys.
+# CI: import key via .github/workflows/release.yml secrets (GPG_PRIVATE_KEY, optional GPG_PASSPHRASE).
+# Local: ensure a default signing key is available, or set GPG_FINGERPRINT and use args below.
+signs:
+  - artifacts: checksum
 
 release:
   extra_files:
