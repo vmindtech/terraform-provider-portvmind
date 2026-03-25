@@ -47,7 +47,8 @@ checksum:
 # GPG signing: required by the Terraform Registry (SHA256SUMS + SHA256SUMS.sig).
 # Register the matching public key under Registry → Provider → Signing keys.
 # CI: import key via .github/workflows/release.yml secrets (GPG_PRIVATE_KEY, optional GPG_PASSPHRASE).
-# Local: ensure a default signing key is available, or set GPG_FINGERPRINT and use args below.
+# After a successful import in CI, the keyring has exactly one secret key → default signing works.
+# Local: same, or use `GPG_FINGERPRINT=... goreleaser release` if you have multiple keys (see GoReleaser sign docs).
 signs:
   - artifacts: checksum
 
