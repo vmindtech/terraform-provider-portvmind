@@ -1,4 +1,4 @@
-package provider
+package vke
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/vmindtech/terraform-provider-vke/internal/client"
+	"github.com/vmindtech/terraform-provider-portvmind/internal/client"
 )
 
 var _ resource.Resource = &clusterResource{}
@@ -356,7 +356,7 @@ func transientClusterPollError(err error) bool {
 	case http.StatusInternalServerError, http.StatusBadGateway,
 		http.StatusServiceUnavailable, http.StatusGatewayTimeout:
 		return true
-	case http.StatusUnprocessableEntity: // 422 — some deployments wrap transient backend errors here
+	case http.StatusUnprocessableEntity: // 422 - some deployments wrap transient backend errors here
 		return true
 	default:
 		return false
@@ -423,23 +423,23 @@ func (r *clusterResource) waitClusterGone(ctx context.Context, id string, timeou
 }
 
 type clusterResourceModel struct {
-	ID                          types.String `tfsdk:"id"`
-	ProjectID                   types.String `tfsdk:"project_id"`
-	Name                        types.String `tfsdk:"name"`
-	KubernetesVersion           types.String `tfsdk:"kubernetes_version"`
-	NodeKeyPairName             types.String `tfsdk:"node_key_pair_name"`
-	ClusterAPIAccess            types.String `tfsdk:"cluster_api_access"`
-	SubnetIDs                   types.List   `tfsdk:"subnet_ids"`
-	WorkerNodeGroupMinSize      types.Int64  `tfsdk:"worker_node_group_min_size"`
-	WorkerNodeGroupMaxSize      types.Int64  `tfsdk:"worker_node_group_max_size"`
-	WorkerInstanceFlavorUUID    types.String `tfsdk:"worker_instance_flavor_uuid"`
-	MasterInstanceFlavorUUID    types.String `tfsdk:"master_instance_flavor_uuid"`
-	WorkerDiskSizeGB            types.Int64  `tfsdk:"worker_disk_size_gb"`
-	AllowedCIDRs                types.List   `tfsdk:"allowed_cidrs"`
-	Status                      types.String `tfsdk:"status"`
-	Kubeconfig                  types.String `tfsdk:"kubeconfig"`
-	CreateTimeoutMinutes        types.Int64  `tfsdk:"create_timeout_minutes"`
-	DeleteTimeoutMinutes        types.Int64  `tfsdk:"delete_timeout_minutes"`
+	ID                       types.String `tfsdk:"id"`
+	ProjectID                types.String `tfsdk:"project_id"`
+	Name                     types.String `tfsdk:"name"`
+	KubernetesVersion        types.String `tfsdk:"kubernetes_version"`
+	NodeKeyPairName          types.String `tfsdk:"node_key_pair_name"`
+	ClusterAPIAccess         types.String `tfsdk:"cluster_api_access"`
+	SubnetIDs                types.List   `tfsdk:"subnet_ids"`
+	WorkerNodeGroupMinSize   types.Int64  `tfsdk:"worker_node_group_min_size"`
+	WorkerNodeGroupMaxSize   types.Int64  `tfsdk:"worker_node_group_max_size"`
+	WorkerInstanceFlavorUUID types.String `tfsdk:"worker_instance_flavor_uuid"`
+	MasterInstanceFlavorUUID types.String `tfsdk:"master_instance_flavor_uuid"`
+	WorkerDiskSizeGB         types.Int64  `tfsdk:"worker_disk_size_gb"`
+	AllowedCIDRs             types.List   `tfsdk:"allowed_cidrs"`
+	Status                   types.String `tfsdk:"status"`
+	Kubeconfig               types.String `tfsdk:"kubeconfig"`
+	CreateTimeoutMinutes     types.Int64  `tfsdk:"create_timeout_minutes"`
+	DeleteTimeoutMinutes     types.Int64  `tfsdk:"delete_timeout_minutes"`
 }
 
 func (m *clusterResourceModel) createTimeout() int64 {

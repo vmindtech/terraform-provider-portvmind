@@ -1,4 +1,4 @@
-package provider
+package vke
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/vmindtech/terraform-provider-vke/internal/client"
+	"github.com/vmindtech/terraform-provider-portvmind/internal/client"
 )
 
 var _ datasource.DataSource = &clusterDataSource{}
@@ -100,12 +100,12 @@ func (d *clusterDataSource) Read(ctx context.Context, req datasource.ReadRequest
 }
 
 type clusterDataSourceModel struct {
-	ClusterID             types.String `tfsdk:"cluster_id"`
-	ID                    types.String `tfsdk:"id"`
-	Name                  types.String `tfsdk:"name"`
-	ProjectID             types.String `tfsdk:"project_id"`
-	KubernetesVersion     types.String `tfsdk:"kubernetes_version"`
-	APIAccess             types.String `tfsdk:"api_access"`
-	Status                types.String `tfsdk:"status"`
-	SharedSecurityGroup   types.String `tfsdk:"shared_security_group"`
+	ClusterID           types.String `tfsdk:"cluster_id"`
+	ID                  types.String `tfsdk:"id"`
+	Name                types.String `tfsdk:"name"`
+	ProjectID           types.String `tfsdk:"project_id"`
+	KubernetesVersion   types.String `tfsdk:"kubernetes_version"`
+	APIAccess           types.String `tfsdk:"api_access"`
+	Status              types.String `tfsdk:"status"`
+	SharedSecurityGroup types.String `tfsdk:"shared_security_group"`
 }

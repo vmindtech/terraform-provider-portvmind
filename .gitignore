@@ -36,4 +36,4 @@ override.tf.json
 .terraformrc
 
 # Locally built provider binary
-terraform-provider-vke
+terraform-provider-portvmind

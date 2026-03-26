@@ -133,7 +133,7 @@ func (c *VKEClient) do(ctx context.Context, method, reqURL string, body io.Reade
 	}
 	req.Header.Set("X-Auth-Token", token)
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "terraform-provider-vke (+https://github.com/vmindtech/terraform-provider-vke)")
+	req.Header.Set("User-Agent", "terraform-provider-portvmind (+https://github.com/vmindtech/terraform-provider-portvmind)")
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
 	}
@@ -184,7 +184,7 @@ type ClusterModel struct {
 	ClusterSharedSecurityGroup string `json:"cluster_shared_security_group"`
 }
 
-// CreateClusterRequest is the POST /cluster body (vmindtech/vke internal/dto/request).
+// CreateClusterRequest is the POST /cluster body (PortVMind VKE API).
 type CreateClusterRequest struct {
 	ClusterName              string   `json:"clusterName"`
 	ProjectID                string   `json:"projectId"`
@@ -311,7 +311,7 @@ func (c *VKEClient) GetKubeYAML(ctx context.Context, clusterID string) (string, 
 	}
 	req.Header.Set("X-Auth-Token", token)
 	req.Header.Set("Accept", "application/x-yaml, */*")
-	req.Header.Set("User-Agent", "terraform-provider-vke (+https://github.com/vmindtech/terraform-provider-vke)")
+	req.Header.Set("User-Agent", "terraform-provider-portvmind (+https://github.com/vmindtech/terraform-provider-portvmind)")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

@@ -1,7 +1,7 @@
 # https://goreleaser.com — release artifacts for the Terraform Registry
 version: 2
 
-project_name: terraform-provider-vke
+project_name: terraform-provider-portvmind
 
 before:
   hooks:

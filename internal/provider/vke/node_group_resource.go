@@ -1,4 +1,4 @@
-package provider
+package vke
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/vmindtech/terraform-provider-vke/internal/client"
+	"github.com/vmindtech/terraform-provider-portvmind/internal/client"
 )
 
 var (

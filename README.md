@@ -1,6 +1,6 @@
-# Terraform Provider: VMind Kubernetes Engine (VKE)
+# Terraform Provider: PortVMind
 
-Official Terraform provider for [VMind Kubernetes Engine (VKE)](https://github.com/vmindtech/vke). It obtains an OpenStack Keystone token and sends it to the VKE API as `X-Auth-Token`.
+Terraform provider for PortVMind services. The current release includes VKE resources and obtains an OpenStack Keystone token, then sends it to the API as `X-Auth-Token`.
 
 ## Requirements
 
@@ -14,14 +14,14 @@ After the provider is published:
 ```hcl
 terraform {
   required_providers {
-    vke = {
-      source  = "vmindtech/vke"
+    portvmind = {
+      source  = "vmindtech/portvmind"
       version = "~> 0.1"
     }
   }
 }
 
-provider "vke" {
+provider "portvmind" {
   endpoint = "https://YOUR-VKE-API/api/v1"
   auth_url = "https://YOUR-KEYSTONE:5000/v3"
 
@@ -39,8 +39,8 @@ provider "vke" {
 
 ## Publishing and testing via the Registry
 
-1. Host the repository at **`github.com/vmindtech/terraform-provider-vke`** (or keep `go.mod` consistent with your module path).
-2. Sign in to the [Terraform Registry](https://registry.terraform.io/sign-in) → **Publish** → Provider → connect GitHub; namespace `vmindtech`, provider name `vke`.
+1. Host the repository at **`github.com/vmindtech/terraform-provider-portvmind`** (or keep `go.mod` consistent with your module path).
+2. Sign in to the [Terraform Registry](https://registry.terraform.io/sign-in) → **Publish** → Provider → connect GitHub; namespace `vmindtech`, provider name `portvmind`.
 3. **GPG signing:** [Signing keys](https://developer.hashicorp.com/terraform/registry/providers/publishing#preparing-and-gpg-signing) — add your GPG key in the Registry. For the first release you can try without signing; if the Registry requires it, uncomment the `signs` block in `.goreleaser.yml` and set `GPG_FINGERPRINT` locally.
 4. Push a version tag; the GitHub Actions `release` workflow runs GoReleaser and publishes zips and `SHA256SUMS`:
 
@@ -54,14 +54,14 @@ git push origin v0.1.0
 ## Local build
 
 ```bash
-go build -o terraform-provider-vke .
+go build -o terraform-provider-portvmind .
 ```
 
 ## Resources
 
-- `vke_cluster` — create/destroy cluster; `kubeconfig` after the cluster is Active
-- `vke_node_group` — worker node groups
-- `vke_cluster` (data source) — read existing cluster metadata
+- `portvmind_cluster` — create/destroy cluster; `kubeconfig` after the cluster is Active
+- `portvmind_node_group` — worker node groups
+- `portvmind_cluster` (data source) — read existing cluster metadata
 
 ## Examples
 

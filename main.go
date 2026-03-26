@@ -8,7 +8,7 @@ import (
 	tfprovider "github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 
-	vkeprovider "github.com/vmindtech/terraform-provider-vke/internal/provider"
+	portvmindprovider "github.com/vmindtech/terraform-provider-portvmind/internal/provider"
 )
 
 func main() {
@@ -17,12 +17,12 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/vmindtech/vke",
+		Address: "registry.terraform.io/vmindtech/portvmind",
 		Debug:   debug,
 	}
 
 	err := providerserver.Serve(context.Background(), func() tfprovider.Provider {
-		return vkeprovider.New()
+		return portvmindprovider.New()
 	}, opts)
 	if err != nil {
 		log.Fatal(err)

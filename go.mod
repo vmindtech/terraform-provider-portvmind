@@ -1,4 +1,4 @@
-module github.com/vmindtech/terraform-provider-vke
+module github.com/vmindtech/terraform-provider-portvmind
 
 go 1.22.0
 

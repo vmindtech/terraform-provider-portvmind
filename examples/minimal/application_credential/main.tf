@@ -4,30 +4,30 @@
 
 terraform {
   required_providers {
-    vke = {
-      source  = "vmindtech/vke"
+    portvmind = {
+      source  = "vmindtech/portvmind"
       version = "~> 0.1"
     }
   }
 }
 
-variable "vke_endpoint" { type = string }
-variable "vke_auth_url" { type = string }
+variable "portvmind_endpoint" { type = string }
+variable "portvmind_auth_url" { type = string }
 
-variable "vke_application_credential_id" { type = string }
-variable "vke_application_credential_secret" {
+variable "portvmind_application_credential_id" { type = string }
+variable "portvmind_application_credential_secret" {
   type      = string
   sensitive = true
 }
 
-provider "vke" {
-  endpoint   = var.vke_endpoint
-  auth_url   = var.vke_auth_url
+provider "portvmind" {
+  endpoint   = var.portvmind_endpoint
+  auth_url   = var.portvmind_auth_url
 
-  application_credential_id     = var.vke_application_credential_id
-  application_credential_secret = var.vke_application_credential_secret
+  application_credential_id     = var.portvmind_application_credential_id
+  application_credential_secret = var.portvmind_application_credential_secret
 }
 
-# data "vke_cluster" "example" {
+# data "portvmind_cluster" "example" {
 #   cluster_id = "..."
 # }
