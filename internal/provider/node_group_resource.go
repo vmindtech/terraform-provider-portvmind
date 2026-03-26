@@ -194,7 +194,6 @@ func (r *nodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	state.Name = types.StringValue(ng.NodeGroupName)
 	state.NodeFlavorUUID = types.StringValue(ng.NodeFlavorUUID)
 	state.NodeDiskSize = types.Int64Value(int64(ng.NodeDiskSize))
 	state.MinSize = types.Int64Value(int64(ng.NodeGroupMinSize))
