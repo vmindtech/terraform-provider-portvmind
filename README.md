@@ -58,7 +58,7 @@ provider "portvmind" {
 resource "portvmind_vke_cluster" "main" {
   # project_id is optional when provider.project_id is set (same OpenStack project)
   name               = "terraform-cluster"
-  kubernetes_version = "<supported_k8s_version>"
+  kubernetes_version = "v1.35.2+rke2r1"
 
   node_key_pair_name = "<keypair_name>"
   cluster_api_access = "public"
