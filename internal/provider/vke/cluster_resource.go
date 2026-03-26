@@ -30,7 +30,7 @@ func NewClusterResource() resource.Resource {
 }
 
 func (r *clusterResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_cluster"
+	resp.TypeName = req.ProviderTypeName + "_vke_cluster"
 }
 
 func (r *clusterResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {

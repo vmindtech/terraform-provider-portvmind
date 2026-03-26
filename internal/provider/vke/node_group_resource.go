@@ -30,7 +30,7 @@ func NewNodeGroupResource() resource.Resource {
 }
 
 func (r *nodeGroupResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_node_group"
+	resp.TypeName = req.ProviderTypeName + "_vke_node_group"
 }
 
 func (r *nodeGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {

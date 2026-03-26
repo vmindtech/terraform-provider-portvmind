@@ -22,7 +22,7 @@ func NewClusterDataSource() datasource.DataSource {
 }
 
 func (d *clusterDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_cluster"
+	resp.TypeName = req.ProviderTypeName + "_vke_cluster"
 }
 
 func (d *clusterDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
