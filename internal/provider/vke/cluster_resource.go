@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
@@ -19,7 +20,10 @@ import (
 	"github.com/vmindtech/terraform-provider-portvmind/internal/client"
 )
 
-var _ resource.Resource = &clusterResource{}
+var (
+	_ resource.Resource                 = &clusterResource{}
+	_ resource.ResourceWithModifyPlan   = &clusterResource{}
+)
 
 type clusterResource struct {
 	client *client.VKEClient
@@ -47,8 +51,10 @@ func (r *clusterResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"project_id": schema.StringAttribute{
 				Description: "OpenStack project UUID (VKE projectId). If omitted, the provider's project_id (Keystone scope) is used when set; otherwise set this explicitly.",
 				Optional:    true,
+				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"name": schema.StringAttribute{
@@ -155,6 +161,29 @@ func (r *clusterResource) Configure(_ context.Context, req resource.ConfigureReq
 		return
 	}
 	r.client = c
+}
+
+func (r *clusterResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if r.client == nil {
+		return
+	}
+	var config clusterResourceModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	var state clusterResourceModel
+	_ = req.State.Get(ctx, &state)
+
+	configEmpty := config.ProjectID.IsNull() || config.ProjectID.IsUnknown() || strings.TrimSpace(config.ProjectID.ValueString()) == ""
+	if !configEmpty || r.client.DefaultClusterProjectID == "" {
+		return
+	}
+	// First creation: inject the provider default so the plan is not null while apply sets the same value.
+	if state.ID.IsNull() || state.ID.ValueString() == "" {
+		resp.Diagnostics.Append(resp.Plan.SetAttribute(ctx, path.Root("project_id"),
+			types.StringValue(r.client.DefaultClusterProjectID))...)
+	}
 }
 
 func (r *clusterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
