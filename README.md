@@ -1,74 +1,21 @@
 # Terraform Provider: PortvMind
 
-Terraform provider for PortvMind services. The current release includes VKE resources and obtains an OpenStack Keystone token, then sends it to the API as `X-Auth-Token`.
+Use the PortvMind Terraform Provider to manage PortvMind cloud services with Terraform.
+The current release includes VKE cluster and node group resources.
 
 ## Requirements
 
-- Terraform 1.0+
-- Go 1.22+ (for development)
+- Terraform `>= 1.0`
 
-## Usage (Terraform Registry)
+## Supported resources
 
-After the provider is published:
+- `portvmind_vke_cluster`: Create/delete VKE clusters and generate `kubeconfig`
+- `portvmind_vke_node_group`: Create/update/delete worker node groups for a cluster
+- `data.portvmind_vke_cluster`: Read metadata for an existing cluster
 
-```hcl
-terraform {
-  required_providers {
-    portvmind = {
-      source  = "vmindtech/portvmind"
-      version = "~> 0.1"
-    }
-  }
-}
+## Quick start
 
-provider "portvmind" {
-  endpoint = "https://YOUR-VKE-API/api/v1"
-  auth_url = "https://YOUR-KEYSTONE:5000/v3"
-
-  # Option A: password (same variables as the OpenStack provider)
-  user_name        = var.user_name
-  password         = var.password
-  user_domain_name = var.user_domain_name
-  tenant_name      = var.project_name
-
-  # Option B: application credential (do not set password fields)
-  # application_credential_id     = var.app_cred_id
-  # application_credential_secret = var.app_cred_secret
-}
-```
-
-## Publishing and testing via the Registry
-
-1. Host the repository at **`github.com/vmindtech/terraform-provider-portvmind`** (or keep `go.mod` consistent with your module path).
-2. Sign in to the [Terraform Registry](https://registry.terraform.io/sign-in) → **Publish** → Provider → connect GitHub; namespace `vmindtech`, provider name `portvmind`.
-3. **GPG signing:** [Signing keys](https://developer.hashicorp.com/terraform/registry/providers/publishing#preparing-and-gpg-signing) — add your GPG key in the Registry. For the first release you can try without signing; if the Registry requires it, uncomment the `signs` block in `.goreleaser.yml` and set `GPG_FINGERPRINT` locally.
-4. Push a version tag; the GitHub Actions `release` workflow runs GoReleaser and publishes zips and `SHA256SUMS`:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-5. After a short delay, `terraform init` will download the provider from the Registry.
-
-## Local build
-
-```bash
-go build -o terraform-provider-portvmind .
-```
-
-## Resources
-
-- `portvmind_vke_cluster` — create/destroy cluster; `kubeconfig` after the cluster is Active
-- `portvmind_vke_node_group` — worker node groups
-- `portvmind_vke_cluster` (data source) — read existing cluster metadata
-
-## Examples
-
-- `examples/minimal/main.tf` — password auth (aligned with the OpenStack provider variables)
-- `examples/minimal/application_credential/main.tf` — application credential auth
-
-### Anonymized end-to-end example
+The following example is an end-to-end single-file configuration.
 
 ```hcl
 terraform {
@@ -84,11 +31,15 @@ provider "portvmind" {
   endpoint = "https://<region>-apigw.portvmind.com/vke/api/v1"
   auth_url = "https://<region>-apigw.portvmind.com"
 
-  # Option A: password (same variables as the OpenStack provider)
+  # Option A: password authentication
   user_name        = "<user_name>"
   password         = "<password>"
   user_domain_name = "Default"
   tenant_name      = "<tenant_name>"
+
+  # Option B: application credential (do not use with Option A)
+  # application_credential_id     = "<app_cred_id>"
+  # application_credential_secret = "<app_cred_secret>"
 }
 
 resource "portvmind_vke_cluster" "main" {
@@ -110,18 +61,6 @@ resource "portvmind_vke_cluster" "main" {
   allowed_cidrs                = ["0.0.0.0/0"] # Restrict in production.
 }
 
-resource "local_file" "kubeconfig" {
-  filename        = "${path.module}/kubeconfig.yaml"
-  content         = portvmind_vke_cluster.main.kubeconfig
-  file_permission = "0600"
-}
-
-output "kubeconfig_base64" {
-  description = "Kubeconfig YAML (base64)"
-  value       = base64encode(portvmind_vke_cluster.main.kubeconfig)
-  sensitive   = true
-}
-
 resource "portvmind_vke_node_group" "workers_2" {
   cluster_id       = portvmind_vke_cluster.main.id
   name             = "workers-2"
@@ -139,8 +78,35 @@ resource "portvmind_vke_node_group" "workers_2" {
   #   "dedicated=worker2:NoSchedule",
   # ]
 }
+
+output "cluster_id" {
+  value = portvmind_vke_cluster.main.id
+}
+
+output "cluster_status" {
+  value = portvmind_vke_cluster.main.status
+}
+
+output "kubeconfig" {
+  value     = portvmind_vke_cluster.main.kubeconfig
+  sensitive = true
+}
 ```
+
+## Run
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+## Notes
+
+- The `kubeconfig` attribute is returned as a sensitive value.
+- Cluster provisioning can take time depending on infrastructure state.
+- Restrict `allowed_cidrs` according to your security requirements.
 
 ## License
 
-See `LICENSE`.
+See `LICENSE` for details.
