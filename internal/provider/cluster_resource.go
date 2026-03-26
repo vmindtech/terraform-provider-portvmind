@@ -90,16 +90,10 @@ func (r *clusterResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"worker_node_group_min_size": schema.Int64Attribute{
 				Description: "Initial worker node group minimum size.",
 				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
-				},
 			},
 			"worker_node_group_max_size": schema.Int64Attribute{
 				Description: "Initial worker node group maximum size.",
 				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
-				},
 			},
 			"worker_instance_flavor_uuid": schema.StringAttribute{
 				Description: "Worker flavor UUID.",
@@ -258,9 +252,34 @@ func (r *clusterResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 func (r *clusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan clusterResourceModel
+	var state clusterResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	if !plan.WorkerNodeGroupMinSize.Equal(state.WorkerNodeGroupMinSize) ||
+		!plan.WorkerNodeGroupMaxSize.Equal(state.WorkerNodeGroupMaxSize) {
+		groups, err := r.client.ListNodeGroups(ctx, state.ID.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddError("Could not list node groups", err.Error())
+			return
+		}
+		defaultNG, err := pickDefaultClusterWorkerNodeGroup(groups)
+		if err != nil {
+			resp.Diagnostics.AddError("Could not select default worker node group", err.Error())
+			return
+		}
+		mn := uint32(plan.WorkerNodeGroupMinSize.ValueInt64())
+		mx := uint32(plan.WorkerNodeGroupMaxSize.ValueInt64())
+		if _, err := r.client.UpdateNodeGroup(ctx, state.ID.ValueString(), defaultNG.NodeGroupUUID, client.UpdateNodeGroupRequest{
+			MinNodes: &mn,
+			MaxNodes: &mx,
+		}); err != nil {
+			resp.Diagnostics.AddError("Could not update default worker node group", err.Error())
+			return
+		}
 	}
 
 	st, err := r.client.GetCluster(ctx, plan.ID.ValueString())
@@ -278,6 +297,31 @@ func (r *clusterResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+}
+
+func pickDefaultClusterWorkerNodeGroup(groups []client.NodeGroup) (*client.NodeGroup, error) {
+	if len(groups) == 0 {
+		return nil, fmt.Errorf("cluster has no node groups")
+	}
+
+	var firstWorker *client.NodeGroup
+	for i := range groups {
+		g := &groups[i]
+		typ := strings.ToLower(g.NodeGroupsType)
+		name := strings.ToLower(g.NodeGroupName)
+
+		if strings.Contains(typ, "default") || strings.Contains(name, "default") {
+			return g, nil
+		}
+		if firstWorker == nil && (strings.Contains(typ, "worker") || typ == "") {
+			firstWorker = g
+		}
+	}
+	if firstWorker != nil {
+		return firstWorker, nil
+	}
+
+	return nil, fmt.Errorf("no worker node group found among %d groups", len(groups))
 }
 
 func (r *clusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
