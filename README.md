@@ -34,7 +34,7 @@ terraform {
   required_providers {
     portvmind = {
       source  = "vmindtech/portvmind"
-      version = "~> 1.0.2"
+      version = "~> 1.0.3"
     }
   }
 }
