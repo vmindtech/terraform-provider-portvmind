@@ -240,6 +240,14 @@ func (r *clusterResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.ID = types.StringValue(out.ClusterUUID)
 	plan.Status = types.StringValue(out.ClusterStatus)
 
+	// Persist the ID before waiting: if the wait or the follow-up reads fail,
+	// the cluster must still be recorded in state (tainted) instead of orphaned.
+	plan.Kubeconfig = types.StringNull()
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	if err := r.waitClusterActive(ctx, out.ClusterUUID, time.Duration(createTO)*time.Minute); err != nil {
 		resp.Diagnostics.AddError("Cluster did not become ready", err.Error())
 		return
