@@ -165,6 +165,15 @@ func (r *nodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 
 	plan.ID = types.StringValue(out.NodeGroupID)
 
+	// Persist the ID before the follow-up read: if it fails, the node group
+	// must still be recorded in state (tainted) instead of orphaned.
+	plan.CurrentNodes = types.Int64Null()
+	plan.Status = types.StringNull()
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	ng, err := r.client.GetNodeGroup(ctx, plan.ClusterID.ValueString(), out.NodeGroupID)
 	if err != nil {
 		resp.Diagnostics.AddError("Could not read node group", err.Error())
