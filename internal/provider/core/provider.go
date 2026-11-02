@@ -29,22 +29,22 @@ func (p *portvmindProvider) Metadata(_ context.Context, _ provider.MetadataReque
 
 func (p *portvmindProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "PortVMind cloud provider. Current resources use VKE APIs and Keystone token authentication.",
+		Description: "PortvMind Cloud provider. Current resources use VKE APIs and PortvMind Cloud authentication.",
 		Attributes: map[string]schema.Attribute{
 			"endpoint": schema.StringAttribute{
 				Description: "VKE API base URL (e.g. https://example.com/api/v1).",
 				Required:    true,
 			},
 			"auth_url": schema.StringAttribute{
-				Description: "OpenStack Identity (Keystone) URL.",
+				Description: "PortvMind Cloud identity URL.",
 				Required:    true,
 			},
 			"user_name": schema.StringAttribute{
-				Description: "Keystone user name (password authentication).",
+				Description: "PortvMind Cloud user name (password authentication).",
 				Optional:    true,
 			},
 			"password": schema.StringAttribute{
-				Description: "Keystone password.",
+				Description: "PortvMind Cloud password.",
 				Optional:    true,
 				Sensitive:   true,
 			},
@@ -53,15 +53,15 @@ func (p *portvmindProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 				Optional:    true,
 			},
 			"tenant_name": schema.StringAttribute{
-				Description: "Keystone project (tenant) name for token scope. Use tenant_name or project_id, not both.",
+				Description: "PortvMind Cloud project name. Use tenant_name or project_id, not both.",
 				Optional:    true,
 			},
 			"project_id": schema.StringAttribute{
-				Description: "Keystone project (tenant) UUID for token scope (OpenStack-style scope.project.id). Use tenant_name or project_id, not both.",
+				Description: "PortvMind Cloud project ID. Use tenant_name or project_id, not both.",
 				Optional:    true,
 			},
 			"project_domain_name": schema.StringAttribute{
-				Description: "Project domain for Keystone scope. If empty, Default is used.",
+				Description: "PortvMind Cloud project domain. If empty, Default is used.",
 				Optional:    true,
 			},
 			"application_credential_id": schema.StringAttribute{
@@ -138,7 +138,7 @@ func (p *portvmindProvider) Configure(ctx context.Context, req provider.Configur
 		if hasTenant == hasProjectID {
 			resp.Diagnostics.AddError(
 				"Invalid provider configuration",
-				"For password authentication, set exactly one of tenant_name or project_id for Keystone project scope.",
+				"For password authentication, set exactly one of tenant_name or project_id for the PortvMind Cloud project.",
 			)
 			return
 		}

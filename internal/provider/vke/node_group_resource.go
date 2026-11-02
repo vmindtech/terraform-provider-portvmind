@@ -59,7 +59,7 @@ func (r *nodeGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				},
 			},
 			"node_flavor_uuid": schema.StringAttribute{
-				Description: "Nova flavor UUID.",
+				Description: "PortvMind Cloud flavor ID.",
 				Required:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -81,7 +81,7 @@ func (r *nodeGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				},
 			},
 			"node_group_taints": schema.ListAttribute{
-				Description: "Taint listesi (key=value:Effect).",
+				Description: "Kubernetes taints (key=value:Effect).",
 				Optional:    true,
 				ElementType: types.StringType,
 				PlanModifiers: []planmodifier.List{

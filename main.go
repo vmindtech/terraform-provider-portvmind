@@ -11,6 +11,8 @@ import (
 	portvmindprovider "github.com/vmindtech/terraform-provider-portvmind/internal/provider"
 )
 
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@v0.25.0 generate --provider-name portvmind
+
 func main() {
 	var debug bool
 	flag.BoolVar(&debug, "debug", false, "Enable Terraform provider debug logging")

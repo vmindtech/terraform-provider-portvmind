@@ -1,4 +1,4 @@
-# Example: VKE provider with OpenStack application credentials (no user/password).
+# Example: VKE provider with a PortvMind Cloud application credential (no user/password).
 # Do not set user_name, password, user_domain_name, tenant_name, or project_id when using this mode.
 # Pass values via TF_VAR_* or a gitignored *.tfvars file.
 

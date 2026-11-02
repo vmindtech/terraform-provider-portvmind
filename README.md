@@ -14,16 +14,16 @@ Use the PortvMind Terraform Provider to manage PortvMind cloud services with Ter
 
 ## Provider authentication
 
-The provider obtains an OpenStack Keystone token and sends it as `X-Auth-Token` to the PortvMind API.
+The provider authenticates with PortvMind Cloud and sends the token as `X-Auth-Token` to the API.
 
-**Password authentication** — set `user_name`, `password`, and `user_domain_name`, and **exactly one** of the following for the Keystone **project scope**:
+**Password authentication** — set `user_name`, `password`, and `user_domain_name`, and **exactly one** of the following:
 
-- **`tenant_name`** (and optionally **`project_domain_name`**, default `Default`) — scope by project name, same idea as the OpenStack Terraform provider.
-- **`project_id`** — scope by project UUID (Keystone `scope.project.id`). Do not set `tenant_name` when using this.
+- **`tenant_name`** (and optionally **`project_domain_name`**, default `Default`) — select the PortvMind Cloud project by name.
+- **`project_id`** — PortvMind Cloud project ID. Do not set `tenant_name` when using this.
 
 **Application credential** — set `application_credential_id` and `application_credential_secret` only (do not set password fields or `tenant_name` / `project_id`).
 
-**`portvmind_vke_cluster.project_id`** — OpenStack project UUID for the VKE create-cluster API. You can omit it when the provider is configured with **`project_id`** (Keystone scope); the cluster then uses that same UUID. If you authenticate with **`tenant_name`** only, or with **application credentials**, set `project_id` on the cluster resource explicitly.
+**`portvmind_vke_cluster.project_id`** — PortvMind Cloud project ID for the VKE create-cluster API. You can omit it when the provider is configured with **`project_id`**; the cluster then uses that same ID. If you authenticate with **`tenant_name`** only, or with **application credentials**, set `project_id` on the cluster resource explicitly.
 
 ## Quick start
 
@@ -46,9 +46,9 @@ provider "portvmind" {
   password         = "<password>"
   user_domain_name = "Default"
 
-  # Keystone project scope: use tenant_name OR project_id (not both)
+  # PortvMind Cloud project: use tenant_name OR project_id (not both)
   # tenant_name = "<tenant_name>"
-  project_id = "<keystone_project_uuid>"
+  project_id = "<portvmind_cloud_project_id>"
 
   # Option B: application credential (do not use with password auth above)
   # application_credential_id     = "<app_cred_id>"
@@ -56,7 +56,7 @@ provider "portvmind" {
 }
 
 resource "portvmind_vke_cluster" "main" {
-  # project_id is optional when provider.project_id is set (same OpenStack project)
+  # project_id is optional when provider.project_id is set (same PortvMind Cloud project)
   name               = "terraform-cluster"
   kubernetes_version = "v1.35.2+rke2r1"
 
@@ -119,7 +119,7 @@ terraform apply
 - The `kubeconfig` attribute is returned as a sensitive value.
 - Cluster provisioning can take time depending on infrastructure state.
 - Restrict `allowed_cidrs` according to your security requirements.
-- For **flavor types** (Nova flavor UUIDs), **supported Kubernetes versions**, and other **region-specific or environment-specific values**, refer to the PortvMind community and documentation at [discuss.portvmind.com](https://discuss.portvmind.com).
+- For **flavor types** (PortvMind Cloud flavor IDs), **supported Kubernetes versions**, and other **region-specific or environment-specific values**, refer to the PortvMind community and documentation at [discuss.portvmind.com](https://discuss.portvmind.com).
 
 ## License
 

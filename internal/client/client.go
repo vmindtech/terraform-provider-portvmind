@@ -55,7 +55,7 @@ func New(cfg Config) (*VKEClient, error) {
 		return nil, fmt.Errorf("endpoint is required")
 	}
 	if cfg.AuthURL == "" {
-		return nil, fmt.Errorf("auth_url is required (OpenStack Identity / Keystone)")
+		return nil, fmt.Errorf("auth_url is required")
 	}
 
 	passwordMode := cfg.UserName != "" && cfg.Password != ""
@@ -74,7 +74,7 @@ func New(cfg Config) (*VKEClient, error) {
 		hasTenant := cfg.TenantName != ""
 		hasProjectID := cfg.ProjectID != ""
 		if hasTenant == hasProjectID {
-			return nil, fmt.Errorf("for password authentication, set exactly one of tenant_name or project_id for Keystone project scope")
+			return nil, fmt.Errorf("for password authentication, set exactly one of tenant_name or project_id")
 		}
 	}
 

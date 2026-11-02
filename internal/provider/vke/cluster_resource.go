@@ -49,7 +49,7 @@ func (r *clusterResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 				},
 			},
 			"project_id": schema.StringAttribute{
-				Description: "OpenStack project UUID (VKE projectId). If omitted, the provider's project_id (Keystone scope) is used when set; otherwise set this explicitly.",
+				Description: "PortvMind Cloud project ID. If omitted, the provider project_id is used when set; otherwise set this explicitly.",
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
@@ -72,7 +72,7 @@ func (r *clusterResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 				},
 			},
 			"node_key_pair_name": schema.StringAttribute{
-				Description: "Nova keypair name.",
+				Description: "PortvMind Cloud key pair name.",
 				Required:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -467,7 +467,7 @@ func (r *clusterResource) resolveClusterProjectID(planID, stateID types.String) 
 	if r.client != nil && r.client.DefaultClusterProjectID != "" {
 		return r.client.DefaultClusterProjectID, nil
 	}
-	return "", fmt.Errorf("project_id must be set on portvmind_vke_cluster, or configure project_id on the provider (Keystone project scope)")
+	return "", fmt.Errorf("project_id must be set on portvmind_vke_cluster, or configure project_id on the provider")
 }
 
 func (r *clusterResource) waitClusterGone(ctx context.Context, id string, timeout time.Duration) error {

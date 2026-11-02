@@ -38,23 +38,28 @@ func (d *clusterDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Description: "Cluster name.",
+				Computed:    true,
 			},
 			"project_id": schema.StringAttribute{
-				Computed: true,
+				Description: "PortvMind Cloud project ID that owns the cluster.",
+				Computed:    true,
 			},
 			"kubernetes_version": schema.StringAttribute{
-				Computed: true,
+				Description: "Kubernetes version of the cluster.",
+				Computed:    true,
 			},
 			"api_access": schema.StringAttribute{
 				Description: "Cluster API endpoint address.",
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Description: "Cluster status (for example, Active).",
+				Computed:    true,
 			},
 			"shared_security_group": schema.StringAttribute{
-				Computed: true,
+				Description: "Shared security group associated with the cluster.",
+				Computed:    true,
 			},
 		},
 	}
